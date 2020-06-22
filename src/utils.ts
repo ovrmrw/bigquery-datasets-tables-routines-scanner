@@ -1,11 +1,11 @@
-import * as fs from "fs";
-import * as path from "path";
-import moment from "moment";
+import * as fs from 'fs';
+import * as path from 'path';
+import moment from 'moment';
 
-const resultDir = path.join(process.cwd(), "results");
+const resultDir = path.join(process.cwd(), 'results');
 
 export function formatDatetime(timestamp: number) {
-  return moment(timestamp).utcOffset("+09:00").format("YYYY-MM-DD HH:mm:ss.SSS");
+  return moment(timestamp).utcOffset('+09:00').format('YYYY-MM-DD HH:mm:ss.SSS');
 }
 
 export function prepare() {
@@ -16,11 +16,11 @@ export function prepare() {
 
 export function writeFile(filename: string, lines: string[]) {
   const p = path.join(resultDir, filename);
-  fs.writeFile(p, lines.join("\n"), (err) => {
+  fs.writeFile(p, lines.join('\n'), err => {
     if (err) {
       console.error(err);
     } else {
-      console.log("Created: ", p);
+      console.log('Created:', p);
     }
   });
 }

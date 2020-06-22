@@ -1,5 +1,5 @@
-import { BigQuery, Dataset, Table, Routine } from "@google-cloud/bigquery";
-import { CRoutineMetadata, CTableMetadata, CDatasetMetadata } from "./types";
+import { BigQuery, Dataset, Table, Routine } from '@google-cloud/bigquery';
+import { CRoutineMetadata, CTableMetadata, CDatasetMetadata } from './types';
 
 export class BigQueryClient {
   private bigquery: BigQuery;
@@ -11,13 +11,11 @@ export class BigQueryClient {
   async getDatasets() {
     const datasets: Dataset[] = [];
     const getter = async (pageToken: string | null) => {
-      const token = await this.bigquery
-        .getDatasets(pageToken ? { maxResults: 1000, pageToken } : { maxResults: 1000 })
-        .then(([_datasets, apiResponse]) => {
-          _datasets.forEach((dataset) => datasets.push(dataset));
-          const pageToken = apiResponse ? apiResponse.pageToken : null;
-          return pageToken;
-        });
+      const token = await this.bigquery.getDatasets(pageToken ? { maxResults: 1000, pageToken } : { maxResults: 1000 }).then(([_datasets, apiResponse]) => {
+        _datasets.forEach(dataset => datasets.push(dataset));
+        const pageToken = apiResponse ? apiResponse.pageToken : null;
+        return pageToken;
+      });
       if (token) await getter(token);
     };
     await getter(null);
@@ -27,7 +25,7 @@ export class BigQueryClient {
   async getDatasetMetadatas() {
     const datasets = await this.getDatasets();
     return Promise.all(
-      datasets.map((dataset) =>
+      datasets.map(dataset =>
         this.bigquery
           .dataset(dataset.id)
           .getMetadata()
@@ -43,7 +41,7 @@ export class BigQueryClient {
         .dataset(datasetId)
         .getTables(pageToken ? { maxResults: 1000, pageToken } : { maxResults: 1000 })
         .then(([_tables, apiResponse]) => {
-          _tables.forEach((table) => tables.push(table));
+          _tables.forEach(table => tables.push(table));
           const pageToken = apiResponse ? apiResponse.pageToken : null;
           return pageToken;
         });
@@ -68,7 +66,7 @@ export class BigQueryClient {
         .dataset(datasetId)
         .getRoutines(pageToken ? { maxResults: 1000, pageToken } : { maxResults: 1000 })
         .then(([_routines, apiResponse]) => {
-          _routines.forEach((routine) => routines.push(routine));
+          _routines.forEach(routine => routines.push(routine));
           const pageToken = apiResponse ? apiResponse.pageToken : null;
           return pageToken;
         });
