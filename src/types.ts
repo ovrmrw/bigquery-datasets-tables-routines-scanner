@@ -28,6 +28,7 @@ export type CTableMetadata = {
   schema: {
     fields: any[];
   };
+  timePartitioning?: Record<string, any>;
   numBytes: string;
   numLongTermBytes: string;
   numRows: string;
