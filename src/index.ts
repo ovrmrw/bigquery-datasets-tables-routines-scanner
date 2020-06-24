@@ -24,6 +24,8 @@ async function main() {
         datasetId,
         dataset.location,
         (dataset.description || '').replace(/\t/g, ' ').replace(/\n/g, ' '),
+        dataset.defaultTableExpirationMs ? +dataset.defaultTableExpirationMs / 1000 / 60 / 60 / 24 : '',
+        dataset.defaultPartitionExpirationMs ? +dataset.defaultPartitionExpirationMs / 1000 / 60 / 60 / 24 : '',
         tables.length,
         routines.length,
         formatDatetime(+dataset.creationTime),
@@ -31,7 +33,18 @@ async function main() {
       ];
     })
   ).then(lines => {
-    lines.unshift(['project_id', 'dataset_id', 'location', 'description', 'num_of_tables', 'num_of_routines', 'creation_time', 'last_modified_time']);
+    lines.unshift([
+      'project_id',
+      'dataset_id',
+      'location',
+      'description',
+      'default_table_expiration_days',
+      'default_partition_expiration_days',
+      'num_of_tables',
+      'num_of_routines',
+      'creation_time',
+      'last_modified_time',
+    ]);
     writeFile(
       `${projectId}_bigquery_datasets.tsv`,
       lines.map(line => line.join('\t'))
@@ -84,10 +97,13 @@ async function main() {
           tableMetadata.type,
           tableMetadata.location,
           tableMetadata.timePartitioning ? JSON.stringify(tableMetadata.timePartitioning) : '',
+          tableMetadata.rangePartitioning ? JSON.stringify(tableMetadata.rangePartitioning) : '',
+          tableMetadata.clustering ? JSON.stringify(tableMetadata.clustering) : '',
           +tableMetadata.numRows,
           +tableMetadata.numBytes / 1024 / 1024,
           +tableMetadata.numBytes / 1024 / 1024 / 1024,
           (tableMetadata.description || '').replace(/\t/g, ' ').replace(/\n/g, ' '),
+          tableMetadata.expirationTime ? formatDatetime(+tableMetadata.expirationTime) : '',
           formatDatetime(+tableMetadata.creationTime),
           formatDatetime(+tableMetadata.lastModifiedTime),
         ]);
@@ -104,10 +120,13 @@ async function main() {
         'table_type',
         'location',
         'time_partitioning',
+        'range_partitioning',
+        'clustering',
         'rows',
         'mega_bytes',
         'giga_bytes',
         'description',
+        'expiration_time',
         'creation_time',
         'last_modified_time',
       ]);

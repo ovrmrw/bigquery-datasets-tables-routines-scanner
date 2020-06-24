@@ -12,6 +12,8 @@ export type CDatasetMetadata = {
   creationTime: string;
   lastModifiedTime: string;
   location: string;
+  defaultTableExpirationMs?: string;
+  defaultPartitionExpirationMs?: string;
 };
 
 export type CTableMetadata = {
@@ -29,6 +31,8 @@ export type CTableMetadata = {
     fields: any[];
   };
   timePartitioning?: Record<string, any>;
+  rangePartitioning?: Record<string, any>;
+  clustering?: Record<string, any>;
   numBytes: string;
   numLongTermBytes: string;
   numRows: string;
@@ -36,6 +40,7 @@ export type CTableMetadata = {
   lastModifiedTime: string;
   type: string;
   location: string;
+  expirationTime?: string;
 };
 
 export type CRoutineMetadata = {
