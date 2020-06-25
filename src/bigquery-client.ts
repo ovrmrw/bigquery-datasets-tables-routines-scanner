@@ -41,7 +41,9 @@ export class BigQueryClient {
         .dataset(datasetId)
         .getTables(pageToken ? { maxResults: 1000, pageToken } : { maxResults: 1000 })
         .then(([_tables, apiResponse]) => {
-          _tables.forEach(table => tables.push(table));
+          _tables.forEach(table => {
+            tables.push(table);
+          });
           const pageToken = apiResponse ? apiResponse.pageToken : null;
           return pageToken;
         });
@@ -66,7 +68,9 @@ export class BigQueryClient {
         .dataset(datasetId)
         .getRoutines(pageToken ? { maxResults: 1000, pageToken } : { maxResults: 1000 })
         .then(([_routines, apiResponse]) => {
-          _routines.forEach(routine => routines.push(routine));
+          _routines.forEach(routine => {
+            routines.push(routine);
+          });
           const pageToken = apiResponse ? apiResponse.pageToken : null;
           return pageToken;
         });

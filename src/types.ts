@@ -8,7 +8,11 @@ export type CDatasetMetadata = {
     projectId: string;
   };
   description?: string;
-  access: any[];
+  access?: {
+    role: string;
+    specialGroup?: string;
+    userByEmail?: string;
+  }[];
   creationTime: string;
   lastModifiedTime: string;
   location: string;

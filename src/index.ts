@@ -1,11 +1,14 @@
 import { flatten } from 'lodash';
 import { BigQueryClient } from './bigquery-client';
-import { formatDatetime, prepare, writeFile } from './utils';
+import { formatDatetime, prepare, writeFile, getConfig } from './utils';
 
 const client = new BigQueryClient();
+const config = getConfig();
 
 prepare();
 main().catch(console.error);
+
+const approvedEmailSuffixes = ['.gserviceaccount.com'].concat(config.approvedEmailSuffixes || []);
 
 async function main() {
   const datasets = await client.getDatasetMetadatas();
@@ -19,10 +22,12 @@ async function main() {
     datasets.map(async dataset => {
       const datasetId = dataset.datasetReference.datasetId;
       const [tables, routines] = await Promise.all([client.getTables(datasetId), client.getRoutines(datasetId)]);
+      const accessList = (dataset.access || []).filter(a => a.userByEmail && !approvedEmailSuffixes.some(suffix => a.userByEmail.endsWith(suffix)));
       return [
         dataset.datasetReference.projectId,
         datasetId,
         dataset.location,
+        accessList.length > 0 ? JSON.stringify(accessList) : '',
         (dataset.description || '').replace(/\t/g, ' ').replace(/\n/g, ' '),
         dataset.defaultTableExpirationMs ? +dataset.defaultTableExpirationMs / 1000 / 60 / 60 / 24 : '',
         dataset.defaultPartitionExpirationMs ? +dataset.defaultPartitionExpirationMs / 1000 / 60 / 60 / 24 : '',
@@ -37,6 +42,7 @@ async function main() {
       'project_id',
       'dataset_id',
       'location',
+      'access',
       'description',
       'default_table_expiration_days',
       'default_partition_expiration_days',

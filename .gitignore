@@ -2,3 +2,5 @@ node_modules
 
 secrets/
 results/
+
+.config.json

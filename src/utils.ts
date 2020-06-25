@@ -24,3 +24,12 @@ export function writeFile(filename: string, lines: string[]) {
     }
   });
 }
+
+export function getConfig() {
+  const p = path.join(process.cwd(), '.config.json');
+  if (fs.existsSync(p)) {
+    return require(p);
+  } else {
+    return {};
+  }
+}
