@@ -22,7 +22,11 @@ async function main() {
     datasets.map(async dataset => {
       const datasetId = dataset.datasetReference.datasetId;
       const [tables, routines] = await Promise.all([client.getTables(datasetId), client.getRoutines(datasetId)]);
-      const accessList = (dataset.access || []).filter(a => a.userByEmail && !approvedEmailSuffixes.some(suffix => a.userByEmail.endsWith(suffix)));
+      const accessList = (dataset.access || []).filter(
+        a =>
+          (a.userByEmail && !approvedEmailSuffixes.some(suffix => a.userByEmail.endsWith(suffix))) ||
+          (a.groupByEmail && !approvedEmailSuffixes.some(suffix => a.groupByEmail.endsWith(suffix)))
+      );
       return [
         dataset.datasetReference.projectId,
         datasetId,
@@ -81,7 +85,16 @@ async function main() {
   )
     .then(flatten)
     .then(lines => {
-      lines.unshift(['project_id', 'dataset_id', 'routine_id', 'routine_type', 'language', 'description', 'creation_time', 'last_modified_time']);
+      lines.unshift([
+        'project_id',
+        'dataset_id',
+        'routine_id',
+        'routine_type',
+        'language',
+        'description',
+        'creation_time',
+        'last_modified_time',
+      ]);
       writeFile(
         `${projectId}_bigquery_routines.tsv`,
         lines.map(line => line.join('\t'))

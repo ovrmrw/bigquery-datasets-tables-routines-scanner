@@ -11,11 +11,15 @@ export class BigQueryClient {
   async getDatasets() {
     const datasets: Dataset[] = [];
     const getter = async (pageToken: string | null) => {
-      const token = await this.bigquery.getDatasets(pageToken ? { maxResults: 1000, pageToken } : { maxResults: 1000 }).then(([_datasets, apiResponse]) => {
-        _datasets.forEach(dataset => datasets.push(dataset));
-        const pageToken = apiResponse ? apiResponse.pageToken : null;
-        return pageToken;
-      });
+      const token = await this.bigquery
+        .getDatasets(pageToken ? { maxResults: 1000, pageToken } : { maxResults: 1000 })
+        .then(([_datasets, apiResponse]) => {
+          _datasets.forEach(dataset => {
+            datasets.push(dataset);
+          });
+          const pageToken = apiResponse ? apiResponse.pageToken : null;
+          return pageToken;
+        });
       if (token) await getter(token);
     };
     await getter(null);
@@ -29,7 +33,9 @@ export class BigQueryClient {
         this.bigquery
           .dataset(dataset.id)
           .getMetadata()
-          .then(([metadata]) => metadata as CDatasetMetadata)
+          .then(([metadata]) => {
+            return metadata as CDatasetMetadata;
+          })
       )
     );
   }
@@ -58,7 +64,9 @@ export class BigQueryClient {
       .dataset(datasetId)
       .table(tableId)
       .getMetadata()
-      .then(([metadata]) => metadata as CTableMetadata);
+      .then(([metadata]) => {
+        return metadata as CTableMetadata;
+      });
   }
 
   async getRoutines(datasetId: string) {

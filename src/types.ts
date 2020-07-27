@@ -12,6 +12,7 @@ export type CDatasetMetadata = {
     role: string;
     specialGroup?: string;
     userByEmail?: string;
+    groupByEmail?: string;
   }[];
   creationTime: string;
   lastModifiedTime: string;
