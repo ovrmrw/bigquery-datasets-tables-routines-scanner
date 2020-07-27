@@ -21,3 +21,15 @@ then
 ```
 $ npm start
 ```
+
+## Config
+
+Create a file name of `./.config.json`.
+
+Set `approvedEmailSuffixes` array to remove access authorities for the specific email suffixes.
+
+```json
+{
+  "approvedEmailSuffixes": ["@your-organization.com"]
+}
+```
